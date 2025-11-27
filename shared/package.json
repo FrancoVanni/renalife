@@ -1,0 +1,13 @@
+{
+  "name": "@medical-sales-app/shared",
+  "version": "1.0.0",
+  "description": "Shared types for medical sales app",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
+
