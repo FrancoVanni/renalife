@@ -7,12 +7,27 @@ export class DatabaseService implements OnModuleDestroy {
 
   constructor() {
     if (!DatabaseService.dbInstance) {
-      // En producción (Render), usar /tmp para persistencia entre deploys
+      // Determinar el path de la base de datos
+      // En Render con Persistent Disk, usar la variable de entorno o path por defecto
       // En desarrollo, usar el directorio actual
-      const dbPath = process.env.NODE_ENV === 'production' 
-        ? '/tmp/sqlite.db' 
-        : 'sqlite.db';
-      DatabaseService.dbInstance = new sqlite3.Database(dbPath);
+      let dbPath: string;
+      
+      if (process.env.NODE_ENV === 'production') {
+        // Render Persistent Disk se monta en /opt/render/project/src/persistent
+        // O usar variable de entorno si está configurada
+        dbPath = process.env.DATABASE_PATH || '/opt/render/project/src/persistent/sqlite.db';
+      } else {
+        // Desarrollo local
+        dbPath = 'sqlite.db';
+      }
+      
+      DatabaseService.dbInstance = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+          console.error('Error opening database:', err);
+        } else {
+          console.log(`✅ Database connected at: ${dbPath}`);
+        }
+      });
     }
   }
 
